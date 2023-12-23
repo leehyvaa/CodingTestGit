@@ -1,0 +1,40 @@
+파일세팅
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.35.32215\include\bits
+경로에다 stdc++.h 넣기
+
+기본세팅
+#include <bits/stdc++.h>
+using namespace std;
+ios::sync_with_stdio(0); //c와 c++의 입출력 동기화를 제거
+cin.tie(0); // cin 과 cout 을 묶는 과정을 생략하여 cout 전에 cin이 가능해짐
+
+
+bfs 기본 틀
+ㅡㅡ
+전역세팅
+1. first, second X,Y 로 define하기
+2.일반 보드와 visit 보드 만들기
+3.행, 열 nm에 입력하기
+4.dx[4] = {1,0,-1,0}; dy[4] = {0,1,0,-1}; 상하좌우 세팅하기
+
+메인함수 앞
+5.페어를 저장하는 큐 만들기
+6.vis[0][0] =1; 처럼 시작지점 방문
+7.큐에다 시작지점 삽입
+
+와일문(큐가 empty가 아닐경우 계속 반복)
+8.큐에서 front페어를 pop하고 current로 지정하기
+
+상하좌우 for문
+ (방향넣기,continue하기,살아남은거 방문표시하고 큐에다 넣기) 3단계로 이루어짐
+{
+9.for문으로 상하좌우 확인하기
+10.nx와 ny에 nx = cur.x + dx[dir]; 같이 방향넣기
+
+11.nx,ny가 보드 범위 밖이면 continue
+12.visit의 nx,ny 좌표가 1 즉 방문이면 continue
+13.일반보드의 nx,ny 좌표가 != 1 즉 파란칸이 아닐경우(문제에서 제시한 가능한 칸이 아닐경우) continue
+
+14.continue 안당하고 지금까지 남은 좌표를 visit에 넣기 vis[nx][ny] = 1;
+15.큐에다 좌표 푸시하기
+}
