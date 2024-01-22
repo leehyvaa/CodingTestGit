@@ -1,0 +1,432 @@
+WinMain
+윈도우 클래스 생성 - MYRegisterClass
+(윈도우 테두리나 스크롤바 같은 윈도우 스타일을 다 여기서 처리)
+style과 lpfnWndProc(윈도우 이벤트를 누가 받을지 지정) 이 핵심
+
+도착한 메세지를 메세지 큐에 저장한 후 하나씩 꺼내서 WndProc()에 보냄
+DispatchMessage
+
+
+
+
+
+
+헤더를 추가하고 싶으면
+main 위쪽에 넣거나
+프레임워크헤더에 추가한다
+
+
+오브젝트를 삭제하거나 씬을 변경하는 이런 상황들이 게임개발에서
+큰 문제을 일으킬 수 있음
+
+예를 들어 미사일이 추적중인 오브젝트가 갑자기 사라져서 미사일이
+삭제된 메모리의 포지션에 접근한다던지
+
+업데이트 끝나고 렌더링 하려 했는데 갑자기 씬이 바껴서
+A씬 업데이트 해놓고 B씬의 렌더링을 실행한다던지
+
+따라서 이런 씬변경이나 오브젝트 삭제같은 이벤트들을 지연해놨다가 
+프레임 시작이나 끝에서 한번에 몰아서 처리해야함
+
+
+
+
+
+52p에 API 문자 자료형이 있으니 참고
+
+콜라이더 비트연산 행열 약간 이해 덜됨
+이벤트에서 evn.lParam 등등
+DWORD_PTR 이해 덜됨
+
+Tool(4) 이해 덜됨
+멤버함수포인터 이해 덜됨
+
+
+씬체인지 이벤트가 발생하면 그뒤에 예약된 이벤트들을
+실행하지 않는 식으로 고치면 에러 날 확률이 더 줄어듬
+
+
+
+
+씬전환시에 오브젝트를 남기려면
+씬exit에서 오브젝트가 삭제되지 않도록 예외처리 하고
+다음 씬생성에서 바로 그룹등을 지정해서 넣어주는 방법이나
+
+예외 오브젝트 정보를 다 기록해 놨다가 씬 생성시에 오브젝트를
+다시 생성하되 기록해 놓은 정보를 바로 넣어주는 방법이 있다.
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+GetMessage는 게임에 적합하지 않다.
+이벤트가 있을때만 작동하는데 게임은 이벤트가 없을때도 돌아가야 하기 때문
+GetMessage(&msg, nullptr, 0 ,0)
+nullptr은 뭐든다 받겠다는거고 뒤에 숫자는 범위를 의미
+
+PeekMessage는 메시지가 들어오던 말던 항상 돌아간다 따라서 게임에 더 적합
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+InitInstance 윈도우 생성을 담당
+
+	CW_USEDEFAULT, 0, CW_USEDEFAULT, 0
+	윈도우 x,y 사이즈와 시작위치를 지정함
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+WndProc
+윈도우 메세지 받는부분(프로시져)
+그림 그려주고, 이벤트 처리함
+
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+	hWnd는 핸들값으로 신경쓰지 않음 UINT message는 메세지의 종류를 알려줌
+	매개변수의 wParam,과 lParam이 들어오는 입력의 내용을 의미함
+	키보드값이나 마우스값등이 저쪽으로 들어옴
+
+
+이때 WndProc함수는 메세지가 들어올 때 마다 새롭게 실행되기 때문에
+	이 안의 변수들은 매번 초기화 되니까 주의
+	초기화 되지 않고 쓰려면 static을 붙여서 사용
+
+
+
+리소스폴더에
+rc파일 열면 
+단축키 설정, 도움말다이어로그,메뉴종류,아이콘, 스트링테이블이 있음
+	스트링 테이블에서 타이틀등을 바꿀 수 있음(클래스와 통일해야함)
+
+
+
+
+ HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+생성 세팅에서
+WS_OVERLAPPEDWINDOW 자리에 or연산으로 WS_VSROLL 같은 스크롤등을 추가할 수 있음
+이때 비트단위로 플래그를 체크함
+
+
+
+
+UpdateWindow()함수
+뭔가를 그릴 준비를 마친 후에는 항상 실행해줌
+
+
+
+WM_PAINT가 그려준다
+
+            HDC hdc = BeginPaint(hWnd, &ps); 윈도우의 그리기 컨트롤러를 지정한다
+		//그리기 내용이 이 사이에 들어감
+            EndPaint(hWnd, &ps);
+
+BeginPaint 구조체가
+지우고 다시 쓸지 덮어씌워서 그릴지 등을 지정한다
+
+rcPaint로 특정 좌표를 지정해서 그릴 수 있지만 게임엔 적합하지 않음
+
+
+GetDC( ) 와
+ReleaseDC( )가 쌍으로 쓰임
+
+HDC memDC = GETDC(hWnd);
+ReleaseDC(hWnd,memDC);
+릴리스를 안해주면 문제가 생김
+
+출력예시
+            LPCWSTR str = (LPCWSTR)_T("Hello WinAPI");
+            TextOut(hdc, 100, 100, str, _tcslen(str));
+글자출력이 깔끔하지 않으면 브러쉬를 사용하거나, 문자의 배경색을 투명하게 해서 사용
+
+RECT rc = { 100,150,300,550 };
+            rc.left = 100;
+            rc.top = 150;
+            rc.right = 300;
+            rc.bottom = 550;
+            SetTextColor(hdc, RGB(255, 0, 0));
+            
+            DrawText(hdc, _T("aasdasds dfasdsadsadsad"), -1, &rc, DT_CENTER | DT_VCENTER  | DT_WORDBREAK);
+           
+DT_CENTER는 수평 가운데정렬
+DT_VCENTER는 수직 가운데정렬
+DT_WORDBREAK 는 문자열이 길어질 경우 스페이스바를 기준으로 다음줄로 넘겨서 출력한다
+
+
+
+
+
+switch (message)
+    {
+    case WM_CREATE:
+        //얘는 생성자처럼 윈도우 생성시 한 번 실행됨
+        count = 0;
+        break;
+    case WM_KEYDOWN:
+    {
+        int breakpoint = 999;
+    }
+        break;
+    case WM_KEYUP:
+    {
+        int breakpoint = 999;
+    }
+        break;
+    case WM_CHAR:
+    {
+        int breakpoint = 999;
+        hdc = GetDC(hWnd);
+
+        LPCWSTR str = (LPCWSTR)_T("키 눌렸다!!!");
+        TextOut(hdc, 300, 100, str, _tcslen(str));
+
+
+        msg[count++] = wParam;
+        msg[count] = NULL;
+        TextOut(hdc, 300, 120, msg, _tcslen(msg));
+ 
+        ReleaseDC(hWnd, hdc);
+    }
+        break;
+
+
+
+
+
+
+
+WM_CHAR안에
+ InvalidateRect(hWnd,NULL,TRUE);나
+ InvalidateRgn(hWnd,NULL,TRUE);를 사용하면
+(여기서 false는 일부분만 덮어쓰고 true는 화면 전체를 새로 그림)
+그 즉시 다시 그리는 작업을 실행함
+따라서 WM_CHAR 에서는 메시지 변수에 입력만 받아놓고
+WM_PAINT에서 출력하는 방식의 출력이 가능해짐
+ex)
+ case WM_CHAR:
+    {
+        int breakpoint = 999;
+        msg[count++] = wParam;
+        msg[count] = NULL;
+
+        InvalidateRect(hWnd,NULL,TRUE);
+        //InvalidateRgn(hWnd,NULL,TRUE);
+        
+    }
+case WM_PAINT:
+        {
+            hdc = BeginPaint(hWnd, &ps);
+            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+
+            TextOut(hdc, 100, 100, msg, _tcslen(msg));
+
+            EndPaint(hWnd, &ps);
+        }
+        break;
+
+
+
+
+
+ GetTextExtentPoint(hdc, msg, _tcslen(msg), &size);
+ SetCaretPos(100+ size.cx, 0 + 200);
+         HideCaret(hWnd);
+        DestroyCaret();
+
+위의 구문으로 입력 커서를 표시할 수 있음 밑의 두줄은 WM_DESTROY 케이스 안에
+넣어서 윈도우가 종료될 때 삭제함
+
+
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+채팅창 만들기
+
+
+ PAINTSTRUCT ps;
+    HDC hdc;
+
+
+    static TCHAR msg[100];
+    static TCHAR chat[10][100];
+    static int count, yPos;
+    static int strNum;
+    static SIZE size;
+    switch (message)
+    {
+    case WM_CREATE:
+        //얘는 생성자처럼 윈도우 생성시 한 번 실행됨
+        count = 0;
+        yPos = 15;
+        strNum = 0;
+        CreateCaret(hWnd, NULL, 5, 15);
+        ShowCaret(hWnd);
+        break;
+
+ case WM_CHAR:
+    {
+        int breakpoint = 999;
+        if (wParam == VK_BACK && count >0) //백스페이스가 입력됐을경우
+        {
+            count--;
+        }
+        else if (wParam == VK_RETURN)
+        {
+            if (strNum > 9)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    _tcscpy(chat[i], chat[1+i]);
+                }
+                strNum--;
+            }
+            
+			_tcscpy(chat[strNum], msg);
+			strNum++;
+			count = 0;  
+          
+        }
+        else
+        {
+            msg[count++] = wParam;
+        }
+        msg[count] = NULL;
+        InvalidateRect(hWnd, NULL, TRUE);
+        //InvalidateRgn(hWnd,NULL,TRUE);
+        
+    }
+        break;
+
+
+ case WM_PAINT:
+        {
+            hdc = BeginPaint(hWnd, &ps);
+            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+
+            /*GetTextExtentPoint(hdc, msg, _tcslen(msg), &size);
+
+            for (int i = 0; i < 10; i++)
+            {
+                TextOut(hdc, 100, yPos*i, chat[i], _tcslen(chat[i]));
+            }
+
+            TextOut(hdc, 100, 200 , msg, _tcslen(msg));
+
+            SetCaretPos(100+ size.cx, 0 + 200);
+            EndPaint(hWnd, &ps);*/
+
+      }
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+격자 만들기
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+
+About함수
+ 윈도우 메세지 받음, 서브
+
+
+WM_COMAND는 메뉴를 눌렀을 때 작동함
+
+WM_DESTROY는 종료를 눌렀을 때 발동
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+마우스 입력
+
+WndProc에서
+static POINT ptMousePos; 로 포인트 하나를 만들고
+
+
+case WM_MOUSEMOVE:
+    {
+        ptMousePos.x = LOWORD(lParam);
+        ptMousePos.y = HIWORD(lParam);
+
+    }
+        break;
+
+//이렇게 마우스 이동시마다 마우스의 위치를 저장한다
+
+case WM_LBUTTONDOWN:
+이런식으로 마우스 입력시를 특정할 수 있음
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+리소스 폴더
+
+메뉴파일의 상호작용은
+WM_COMMAND
+부분으로 입력이 들어간다
+
+
+메뉴파일을 만들고
+1.wces.메뉴네임 안쪽에 메뉴파일 이름을 넣는다
+2. LoadStringW의 매개변수 2번째 자리에 메뉴파일 이름을 넣는다
+
+
+
+
+팝업메뉴 열기 커맨드 탭에
+int temp = selectedMenu;
+
+            int ans = MessageBox(hWnd, _T("원 그릴래?"), _T("도형 선택"), MB_YESNOCANCEL);
+            if (ans == IDYES)
+            {
+                selectedMenu = CIRCLE;
+            }
+            else if (ans == IDNO)
+            {
+                selectedMenu = NONE;
+            }
+            else
+            {
+                selectedMenu = temp;
+            }
+
+
+
+
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+비동기함수를 쓰면
+윈도우창이 포커싱되어있지 않아도 특정 키가 눌렸는지등을 알 수 있음
+
+
+
+
+
+
+static의 사용법
+1.함수 안에서 사용될때
+static은 스택 영역이 아닌 데이터영역에 저장되어 함수가 종료되어도 살아있다.
+
+2.static이 cpp파일 안에 선언되었을 경우
+마찬가지로 메모리는 데이터영역을 쓰고, 해당 파일안에서만 사용되기 때문에
+다른 파일에 중복선언이 되어도 중복규칙을 피할 수 있다.
+
+3.static이 클래스 안에 선언되었을 경우
+이를 정적멤버라고 해서 데이터영역을 쓰고
+클래스 객체를 아무리 생성하던 삭제하던 데이터영역에 딱 하나 존재함
+
+
+
+
+싱글톤 패턴
+객체의 갯수를 1개로 제한하는 패턴
+생성자를 프라이빗으로 두어서 외부에서 객체 생성을 못하게 하고
+
+static키워드가 붙은 정적 멤버함수는 this 자체가 없기 때문에
+멤버에 접근이 불가능하다 하지만 그로 인해 객체가 없어도 실행이 가능하고
+싱글톤 패턴에 사용한다.
+대신에 정적 멤버함수는 
+유일하게 static 변수(정적멤버변수)에는 접근이 가능하다.
+static 변수는 데이터 영역에 단 하나만 존재하기에 객체의 유무 영향을 받지 않기 때문
+
+정적 멤버는 클래스 밖에서 반드시 초기화 해줘야 한다는 규칙이 있음
+안해주면 링크에러남
+
+
+
+싱글톤 방법은 여러가지 있다.
+1.동적할당방식에(클래스 객체는 힙영역에 만들고) 
+  포인터만 데이터영역에 선언하는방식 (지금 방식)
+2.애초에 static으로 클래스 객체 하나만을 데이터영역에 만들고 쓰는 방식
+3.템플릿 상속을 시키는방법
+
+
+

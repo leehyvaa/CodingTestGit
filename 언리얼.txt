@@ -1,0 +1,680 @@
+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
+
+유니티와 언리얼의 차이점들
+1.언리얼은 컴포넌트 밑에 컴포넌트가 자식으로 들어갈 수 있다.
+2.언리얼은 Instance를 Constant와 Dynamic을 나눠서 사용해야 한다.
+
+
+단축키
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+F8   - 플레이중에 화면탈출
+
+매크로
+alt + w - vs매크로 프로퍼티 생성
+alt + e 프로퍼티 누른 상태로 사용하면 해당 프로퍼티를 다른걸로 수정 가능, 카테고리 지정가능
+alt + 좌클릭으로 오브젝트 움직이면 복사
+
+ctrl +w 블루프린트 내에서 노드들 카피
+
+
+
+
+언리얼 매크로
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+vc의 확장 - 온라인 - Unreal Macro Generator 추가
+ -UPROPERTY, UFUNCTION, UCLASS 자주씀
+ -프로퍼티 두개를 섞어서 쓰는건 지양할것
+
+
+UPROPERTY
+ㅡㅡㅡㅡㅡㅡㅡㅡ								
+DefaultsOnly	Edit    블루프린트 에디터 창의 디테일 패널에서 값을 수정 가능	
+		Visible 블루프린트 에디터 창의 디테일 패널에서 값을 보기 가능
+InstanceOnly	Edit     월드상에 배치된 오브젝트의 디테일 패널에서 값을 수정 가능	
+		Visible  월드상에 배치된 오브젝트의 디테일 패널에서 값을 보기 가능
+Anywhere	Edit     블루프린트 에디터 & 월드상에 배치된 오브젝트의 디테일 패널에서 값을 수정 가능
+		Visible   블루프린트 에디터 & 월드상에 배치된 오브젝트의 디테일 패널에서 값을 보기 가능
+쉽게말해 Default는 블루프린트, Instance는 월드상 배치된 오브젝트의 디테일 패널 ,Anywhere는 둘다가능
+	Edit는 수정가능 Visible은 보기만 가능
+
+
+
+포인터 변수에다 매크로 사용시
+Edit 매크로를 달면 포인터 변수의 참조를 수정하기 때문에 참조를 수정하는 메뉴가 뜬다.
+Visible 매크로를 달면 해당 값을 수정하는 메뉴가 나옴(일반적 사용)
+
+
+
+BlueprintReadOnly	블루프린트에서 해당 변수를 읽기가 가능합니다.
+BlueprintReadWrite	블루프린트에서 해당 변수를 읽기 & 쓰기가 가능합니다.
+BlueprintGetter	해당 변수에 접근 할 수 있는 함수를 지정하고 블루프린트는 해당 함수를 통해 변수에 접근합니다.
+BlueprintSetter	해당 변수에 수정 할 수 있는 함수를 지정하고 블루프린트는 해당 함수를 통해 변수에 수정합니다.
+
+
+카테고리설정
+Category = "Test" 이런식으로 매크로 안에 카테고리 지정이 가능하다.
+Category = "Parent | Test" 이런식으로 상위명칭 | 하위명칭 식으로 작성하면 상하위 카테고리를 지정가능하다.
+
+
+
+UFUNCTION
+ㅡㅡㅡㅡㅡㅡㅡㅡ
+
+UFUNCTION(BlueprintNativeEvent) 
+      void ChangeColorWhite(); //이 함수를 실행하면 _Implementation 가 붙은 이름의 함수가 자동실행
+      void ChangeColorWhite_Implementation(); // 위의 함수를 실행하면 이 함수가 실행된다
+
+UFUNCTION(BlueprintCallable) // C++에서 작성한 함수를 블루프린트에서 사용할 수 있게 해줌
+	float GetValue_Callable_1( ) {return 10.0f;}
+
+UFUNCTION(BlueprintPure) - 간단하게 값 하나 반환하는 형태에 사용
+
+UPARAM 매크로 - 레퍼런스를 인자로 받고 싶을때
+
+UFUNCTION(BlueprintImplementableEvent) - C++에서는 함수 원형만 선언해놓고
+	void CallBlueprintFunc(float fValue) 
+블루프린트에서는 CallBlueprintFunc 함수의 기능을 정의 한 후
+c++에서 해당 함수를 호출하여 사용한다.
+
+
+
+블루프린트에서 Custom 함수 만든 후 해당 Event 함수를 C++ 에서 호출하기
+1. 블루프린트 이벤트그래프에서 커스텀이벤트 함수를 만든다. 
+2. print string 을 이벤트에 연결하고 In String에 함수명을 적어준다.
+3. CallFunctionByNameWithArguments(TEXT("함수명", pAR, nullptr, true); 로 사용
+
+
+자료형
+ㅡㅡㅡㅡㅡㅡㅡㅡ
+FString - 스트링 대체
+ -str.Append("A : "); // str += "A: "; 같은거임
+
+
+
+
+
+
+
+구조체
+ㅡㅡㅡㅡㅡㅡㅡㅡ
+FActorSpawnParameters 
+- 객체를 Spawn할때 안에 매개변수로 넣을 수 있는 파라미터 집합 구조체
+ex) 생성시 오너를 지정시키기
+ACRifle* ACRifle::Spawn(UWorld* InWorld, ACharacter* InOwner)
+{
+	FActorSpawnParameters params;
+	//파라미터중 오너 부분을 InOwner로 지정하여 스폰시 자동으로 owner를 지정함
+	params.Owner = InOwner;
+	return InWorld->SpawnActor<ACRifle>(params);
+}
+
+//아래와 같이 오너를 지정해놓았기 때문에 총이 생성과 동시에 자신의 오너를 알 수 있음
+void ACRifle::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	//Spawn함수에서 생성파라미터로 Owner를 지정해 놨기때문에 GetOwner() 함수가 작동가능
+	OwnerCharacter = Cast<ACharacter>(GetOwner());
+	//홀스터소켓에 라이플을 부착 1번매개변수(부착할 부모), 2번(부착규칙), 3번(부착할 부모컴포넌트의 소켓이름)
+	AttachToComponent(OwnerCharacter->GetMesh(), 
+		FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
+		HolsterSocket
+	);
+}
+
+
+
+함수
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+GLog->Log(str); - 싱글톤으로 되어있는 로그만드는 함수
+
+ㅡㅡㅡㅡ
+OnActorBeginOverlap
+기본 제공하는 이벤트 핸들러입니다. 
+이 이벤트 핸들러는 AActor 클래스에 정의되어 있으며, 
+액터의 충돌 영역(콜라이더)이 다른 액터의 충돌 영역과 겹치기 시작할 때 자동으로 호출됩니다.
+ OnActorEndOverlap와 주로 같이 사용
+ 사용예시
+ OnActorBeginOverlap.AddDynamic(this, &ACActorOverlap::ActorBeginOverlap);
+ 이벤트 발동시 ACActorOverlap::ActorBeginOverlap을 실행
+ㅡㅡㅡㅡ
+ReTriggerableDelay
+유니티의 Invoke와 비슷함
+이벤트 블루프린트 뒤에 이걸 붙이면 이벤트 발생 후 해당 딜레이시간 후에 
+지정한 액션을 실행함
+
+
+
+
+
+
+컴포넌트
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+C:\UE\UE_4.25\Engine\Source\Runtime\Engine\Classes\Components
+를 들어가면 언리얼엔진이 넣어놓은 컴포넌트들을 확인할 수 있음
+
+
+ㅡㅡㅡㅡ
+StaticMeshComponent
+유니티의 MeshComponent와 유사하지만 여기에 충돌, 물리시뮬레이션도 가능
+
+이 컴포넌트는 액터가 시각적인, 정적인(애니메이션이 없는) 3D 모델을 가질 수 있게 해줍니다. 
+주로 변형이나 애니메이션이 필요 없지만 3D 환경의 일부인 건물, 
+가구, 풍경 요소와 같은 객체에 사용됩니다.
+
+일반적으로(?) 스태틱매쉬를 추가해서 사용한다고 함
+UPROPERTY(VisibleDefaultsOnly)
+	class UStaticMeshComponent* Mesh; 헤더에는 이렇게 쓰고
+cpp 파일에는
+#include "Components/StaticMeshComponent.h" 를 헤더로 추가
+
+
+ㅡㅡㅡㅡ
+USceneComponent
+유니티의 Transform혹은 GameObject과 비슷한 기능을 가짐
+
+액터에 대한 위치, 회전, 크기(스케일) 정보를 제공합니다. 
+이 컴포넌트는 시각적 요소를 직접 렌더링하지 않지만, 
+다른 컴포넌트의 부모 역할을 하여 그들의 변환(위치, 회전, 스케일)을 관리합니다.
+
+예를 들어, UStaticMeshComponent, USkeletalMeshComponent, UParticleSystemComponent 등은 
+모두 USceneComponent를 확장하여 각각 정적 메시, 스켈레탈 메시, 
+입자 시스템 등을 렌더링하는 기능을 추가합니다. 즉 UScene을 상속받아 사용
+
+ㅡㅡㅡㅡ
+UBoxComponent
+유니티의 Collider컴포넌트와 비슷한 기능을 가짐
+
+사각형 형태의 충돌 검사 영역을 나타냅니다. 
+이 컴포넌트는 게임 내에서 물리적 상호작용, 충돌 감지, 트리거 영역 설정 등에 주로 사용됩니다.
+
+ㅡㅡㅡㅡ
+UTextRenderComponent
+3D 공간에 텍스트를 렌더링하는 기능을 제공합니다.
+
+ㅡㅡㅡㅡ
+UPrimitiveComponent
+게임 오브젝트의 시각적인 외형과 충돌 처리를 담당합니다. 
+다양한 유형의 원시 형태(프리미티브) 오브젝트를 나타내는 데 사용됩니다.
+시각적 표현,물리적 충돌,물리 시뮬레이션, 소켓, 콜리전 설정 등의 기능을 가지고 있음
+
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+크래쉬 났을때 대처법
+ㅡㅡㅡㅡㅡ
+1.크래쉬파일 로그를 닫지말고 확인 할것
+2.프로젝트 폴더 들어가서 4가지 파일 말고 다 지우고 프로젝트파일로 vc 솔루션파일 재생성
+3.로그 해석에 따라 코드를 수정 후 빌드해볼것 
+3-1. 만약 빌드가 뭔가 안되면 최근에 추가한거 죄다 주석처리하고 에디터부터 켜기
+4.빌드가 문제없이 잘 되면 에디터 파일 실행
+
+2-1
+.vs
+바이너리
+인터미디에이트
+솔루션
+이런 폴더,파일들을 지워야함
+
+
+
+
+에러관련
+ㅡㅡㅡㅡ
+뭔가 에러가 나면 항상 그냥 닫지 말고 바로 검색등으로 해결법 찾고 닫아버렸으면
+작업프로젝트 폴더 - Saved - Logs 안에 로그파일을 확인할것
+
+에디터가 터지는게 두려우면
+플레이 - 선택된 뷰포트가 아닌 독립형 게임으로 실행하면 됨
+
+클래스 생성할때 컴파일을 길게 하는데 이 때 vs 에서 그 파일로 작업해도 됨.
+다만 에디터 컴파일중에 저장은 절대 누르지 말것
+
+수정사항이 뭔가 적용이 안된다 싶으면 vs 빌드와 에디터에서도, 
+블루프린트 등에서도 컴파일을 눌러볼것
+
+vs19 로 에디터에서 연결해서 작업하다가 vs22로 열었을때 에러가 보이는 경우도 있음
+vs를 64 비트로 안하고 32비트 했을경우도 문제가 생김
+
+뭔가 하다가 에디터 컴파일 한번씩 눌러주는게 안전
+
+블루프린트 파일의 레퍼런스를 참조할땐
+ "AnimBlueprint'/Game/ABP_CPlayer.ABP_CPlayer_C'"); 이렇게 _C를 반드시 붙여줘야한다.
+
+
+
+프로젝트 파일 가지고 다니기
+ㅡㅡㅡㅡ
+1번 방법
+content
+config 
+Source
+.uproject
+위의 4개만 가지고 다니면 됨
+.uproject 오른쪽 마우스 눌러서 솔루션파일 만들 수 있음
+
+2번 방법
+에디터 - 파일- 프로젝트 패키지 - 프로젝트 압축 
+
+
+
+스크립트로 만든 변수를 블루프린트로 가져오기 
+ㅡㅡㅡㅡ
+BlueprintReadOnly등의 프로퍼티로 선언하고
+블루프린트 화면 - 이벤트그래프 - 오른쪽마우스 -Get 변수명
+
+
+
+
+
+
+캐릭터 매쉬에 무기같은 매쉬 부착하기
+ㅡㅡㅡㅡ
+캐릭터 매쉬파일 열기 - 왼쪽화면 스켈레톤 트리 - 팔같은 부위에다 오른쪽 마우스
+ -소켓추가 - 소켓이름 바꿔주고 오른쪽마우스 - 프리뷰에셋 추가  - 총 매쉬 지정
+
+
+
+
+
+애니메이션
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+애니메이션 클래스 생성
+오른쪽마우스 - 클래스 생성 - 전체클래스 - 부모클래스를 AnimInstance로 생성
+생성한 h파일에 부모로 삼은 UAnimInstance 클래스에 있는 두가지 함수를 오버라이드
+	virtual void NativeBeginPlay() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+
+
+애니메이션 블루프린트 생성
+오른쪽마우스 - 고급에셋생성 -애니메이션 - 애니메이션 블루프린트 - 부모클래스(CAnimation) 
+ - 밑에 타겟스켈레톤 지정
+
+애니메이션 블루프린트 편집
+ABP(Animation BluePrint)파일 열기 - AnimGraph 뷰 열고 -
+ 오른쪽 에셋 브라우저에서 BS(블렌드스페이스) 파일 끌어오기 - 변수등 만들어서 연결하기
+
+플레이어 클래스파일에다 ABP 파일 세팅해주기
+	TSubclassOf<UAnimInstance> animInstance;
+	CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/ABP_CPlayer.ABP_CPlayer_C'");
+	GetMesh()->SetAnimInstanceClass(animInstance);
+
+
+
+
+충돌
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+콜리전 컴포넌트에 Generate Overlap이 양쪽 오브젝트가 다 풀려있으면 충돌체크가 안들어감
+
+편집- 프로젝트세팅 - 엔진 - 콜리전 - Preset에서 충돌 레이어에 관련한걸 세팅할 수 있다.
+
+
+
+
+언리얼에서 제공하는 기본제공 충돌이벤트
+OnActorBeginOverlap - 두 액터의 충돌영역(콜라이더)가 겹쳤을때 발동 (유니티의 OnTriggerEnter와 유사)
+OnActorEndOverlap
+OnHit - 두 액터가 물리적으로 충돌했을때 발동(유니티의 OnCollisionEnter와 유사, 차량이나 총알등에 주로 사용)
+
+
+
+
+스페어로 해당 범위 충돌검사
+ㅡㅡㅡㅡ
+Mesh->SetCollisionObjectType(ECollisionChannel::ECC_PhysicsBody);로 매쉬의 충돌채널을 설정가능
+이 때 충돌채널은 ECollisionChannel에 f12로 들어가서 번호를 확인하고, Preset과 비교해보면 좋음
+ 
+TArray<TEnumAsByte<EObjectTypeQuery>> queries;
+queries.Add(EObjectTypeQuery::ObjectTypeQuery4);
+위의 코드로 queries에 충돌 체크시 어떤 오브젝트 유형을 검사할지 넣을 수 있음(Query0~32)
+그리고 이 queries를 Sphere Trace (유니티의 CollisionCheck와 유사) 함수에 넣어서 돌리면 아래와 같이 사용하는데
+if (UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(), start, end, 200, queries,
+	false, ignoreActors, EDrawDebugTrace::ForOneFrame, hitResults, true))
+{
+	for (const FHitResult& result : hitResults)
+		{
+			hitResults에서 추출한 result 각각에 대해 충돌처리
+			UStaticMeshComponent* meshComponent = 
+				Cast<UStaticMeshComponent>(result.GetActor()->GetRootComponent());
+
+			if (!!meshComponent)
+				meshComponent->AddRadialImpulse(GetActorLocation(), 1000,
+					meshComponent->GetMass() * 700.0f, ERadialImpulseFalloff::RIF_Linear);
+		}
+	
+}
+
+ㅡㅡㅡㅡ
+
+
+
+파티클
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+class UParticleSystemComponent* Particle; //헤더에서 파티클 변수 생성
+cpp 생성자에서 아래와같이 세팅
+CHelpers::CreateComponent<UParticleSystemComponent>(this, &Particle, "Particle");
+
+	UParticleSystem* particle;
+	CHelpers::GetAsset<UParticleSystem>(&particle,"ParticleSystem'/Game/Effects/P_Explosion2.P_Explosion2'");
+	Particle->SetTemplate(particle);
+	Particle->bAutoActivate = false;
+cpp 발동 이벤트에서
+Particle->ResetParticles();
+	Particle->SetActive(true);
+위와 같이 사용(루프가 안들어가있는 파티클 한정)
+
+
+
+
+
+
+델리게이트
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+델리게이트 종류
+싱글 케스트	가장 기본적인 Delegate로 함수 1개를 바인드하여 사용합니다.
+멀티 케스트	싱글 케스트와 동일하지만 여러 함수를 바인드 할 수 있습니다.
+이벤트		멀티 케스트와 동일하지만 전역으로 설정할 수 없어 외부 클래스에서 
+			추가 델리게이트 선언이 불가능합니다.
+다이나믹		다이나믹은 싱글과, 멀티 두개다 존재하며 다이나믹 델리게이트는 직렬화(Serialize)화 
+			되어 블루프린트에서 사용 가능합니다.
+
+
+델리게이트 사용 6단계
+1.델리게이트 자료형 선언
+2.델리게이트 인스턴스 선언
+3.바인드할 함수 매개변수 맞춰서 선언
+4.바인드
+5.if(바인드 상태일경우)이벤트 발동
+6.사용 후 해제
+
+
+델리게이트 선언시
+1.아래와 같이 매개변수를 넣을때 자료형과 매개변수 사이에 컴마( , )를 넣어줘야하고
+2.자료형 이름 앞에 F를 붙여줘야함 ex) FTraceResult
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FTraceResult, class AActor*, InActor, FLinearColor, InColor);
+그리고 연결할 함수에는 정상적으로 컴마를 없애고 사용
+void StartJump(class AActor* InActor, FLinearColor InColor);
+
+델리게이트에 등록할 함수는 헤더에서 선언할 때
+UFUNCTION( ) 매크로를 위에 붙여줘야한다. ex)
+UFUNCTION( )
+		void CallDeleFunc_Single();
+
+
+
+
+ㅡㅡㅡㅡㅡㅡ
+델리게이트 사용예시 1. 멀티캐스트
+
+1. A스크립트 헤더 에서 델리게이트 선언 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMultiLightBeginOverlap, int32,  FLinearColor);
+	//FMultiLightBeginOverlap이라는 델리게이트 자료형을 만든다
+	//매개변수는 int32,FLinearColor 두개를 사용할것
+FMultiLightBeginOverlap OnMultiLightBeginOverlap;
+	//위에서 지정한 자료형으로 인스턴스를 선언
+
+2. A스크립트 cpp 에서
+if (OnMultiLightBeginOverlap.IsBound())
+	{
+		int32 index = UKismetMathLibrary::RandomIntegerInRange(0, 2);
+
+		FLinearColor color;
+		color.R = UKismetMathLibrary::RandomFloatInRange(0, 1);
+		color.G = UKismetMathLibrary::RandomFloatInRange(0, 1);
+		color.B = UKismetMathLibrary::RandomFloatInRange(0, 1);
+		color.A = 1.0f;
+
+		OnMultiLightBeginOverlap.Broadcast(index, color);
+	} //다른 곳에서 바인드중이면 바인드 되어있는 함수들에게 index와 color값을 넣어주면서 실행 
+
+3. B스크립트 cpp에서
+	triggers[0]->OnMultiLightBeginOverlap.AddUFunction(this, "OnPhyics"); OnPhyics 함수를 바인드
+void ACBox::OnPhyics(int32 InIndex, FLinearColor InColor)
+{
+	매개변수를 이용한 함수사용
+}
+
+
+4.델리게이트 해제
+OnMultiLightBeginOverlap.Clear( );
+
+ㅡㅡㅡㅡㅡㅡ
+델리게이트 사용예시 2. 싱글캐스트
+
+멀티캐스트와 유사하지만 함수명령어가 조금 다르다.
+
+ 선언
+DECLARE_DELEGATE(FDele_Single); 
+DECLARE_DELEGATE_OneParam(FDele_Single_OneParam, int32);
+
+ 바인드
+m_pBoom->Fuc_DeleSingle.BindUFunction(this, FName("CallDeleFunc_Single"));
+m_pBoom->Fuc_DeleSingle_OneParam.BindUFunction(this, FName("CallDeleFunc_Single_OneParam"));
+
+실행
+if(Fuc_DeleSingle.IsBound()==true)	Fuc_DeleSingle.Execute();
+if(Fuc_DeleSingle_OneParam.IsBound() == true) Fuc_DeleSingle_OneParam.Execute(123);
+
+델리게이트 해제(일종의 메모리 해제 함수)
+Fuc_DeleSingle.Unbind();
+Fuc_DeleSingle_OneParam.Unbind()
+
+
+ㅡㅡㅡㅡㅡㅡ
+델리게이트 사용예시 3. 이벤트
+
+이벤트는 멀티캐스트와 유사하지만 전역사용이 불가능하고 해당 클래스에서만 사용가능하다.
+캡슐화 개념으로 사용
+
+UCLASS()
+class DELEGATETEST_API ABoom : public AActor
+{
+	GENERATED_BODY()
+public :
+	//! Event
+	DECLARE_EVENT(ABoom, FDele_Event);
+	DECLARE_EVENT_OneParam(ABoom, FDele_Event_OneParam, int32);
+    
+public :
+	FDele_Event Fuc_DeleEvent;
+	FDele_Event_OneParam Fuc_DeleEvent_OneParam;
+
+
+첫번째 인자값으로 ABoom이라는 자신의 클래스를 입력하는 특징이 있다.
+그 외에는 멀티캐스트 사용법과 동일
+
+ㅡㅡㅡㅡㅡㅡ
+델리게이트 사용예시 4. 다이나믹
+
+직렬화되어 블루프린트에서 사용이 가능해진다.
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDele_Dynamic);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDele_Dynamic_OneParam, int32, SomeParameter);
+
+UCLASS()
+class DELEGATETEST_API ABoom : public AActor
+{
+	GENERATED_BODY()
+public :
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
+		FDele_Dynamic Fuc_Dynamic;
+
+	UPROPERTY(BlueprintAssignable, VisibleAnywhere, BlueprintCallable, Category = "Event")
+		FDele_Dynamic_OneParam Fuc_Dynamic_OneParam;
+
+
+인스턴스(변수) 생성시 UPROPERTY (BlueprintAssignable등을 포함한) 매크로를 사용한다.
+
+바인드시 AddDynamic 함수를 사용한다.
+m_pBoom->Fuc_Dynamic.AddDynamic(this, &ATestPlayer::CallDeleFunc_Dynamic);
+m_pBoom->Fuc_Dynamic_OneParam.AddDynamic(this, &ATestPlayer::CallDeleFunc_Dynamic_OneParam);
+
+그 외에는 멀티캐스트 사용법과 유사
+
+
+
+
+
+
+
+
+
+
+일반
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+비주얼 스튜디오와 언리얼 양쪽에서 다 빌드가 가능
+비주얼c++에서 빌드 하는게 좀더 빠를때가 있음
+빌드중에 코드를 수정한다거나 하는 걸 지양할것
+
+콘텐츠 브라우저의 c++ 클래스만 주로 사용하고 엔진콘텐츠와 엔진c++는 기본제공되는거만 사용
+
+
+
+인크리더블(?)빌드는 그룹 내의 pc 자원을 빌려와서 큰 프로젝트를 빠르게 빌드하는 방법
+
+
+
+
+메테리얼 만들기
+ - 콘텐츠 브라우저에서 폴더 만들고 오른쪽마우스로 기본에셋 - 머티리얼
+ - 더블클릭해서 뷰에서 오른쪽마우스 - VectorParameter - 흰색을 베이스컬러로 연결
+ - ScalarParameter 생성해서 metalic 과 raughness 같은 상수값에 연결하고 저장
+ - alt 좌클릭 하면 연결이 끊김
+
+ - 생성한 머티리얼에 오른쪽마우스 - 인스턴스생성
+ - 생성한 인스턴스파일 더블클릭 후 오른쪽 디테일값 변경
+
+
+만든 매쉬를 스크립트로 수정하기
+ - 매쉬 더블클릭해서 전에 만든 머티리얼 넣어주고 저장
+ - 매쉬 오른쪽 마우스 - 레퍼런스 - 레퍼런스 복사
+ - vc 에다 붙여넣기 ConstructorHelpers 사용해서 열고  Succeeded로 성공여부 확인
+ - 1211 프로젝트 - CSpawnActor.cpp 참조	
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
+	RootComponent = Mesh;
+	ConstructorHelpers::FObjectFinder<UStaticMesh> 
+		mesh(L"StaticMesh'/Game/Meshes/Mesh_Cube.Mesh_Cube'"); // ConstructorHelpers는 생성자에서만 사용가능
+
+	if (mesh.Succeeded())
+	{
+		Mesh->SetStaticMesh(mesh.Object);
+	}
+-대충 이렇게 쓰면 CSpawnActor.cpp 를 기반으로 만든 인스턴스(? 혹은 블루프린트)는
+ 코드로 적어넣은 레퍼런스 매쉬를 가진채로 생성된다.
+
+
+유니티 언리얼
+x     =     y
+y     =     z
+z     =     x
+
+
+
+
+
+클래스명
+A (Actors): Actor 클래스를 상속받는 모든 오브젝트의 이름은 'A'로 시작한다
+	예: APlayerController, ACameraActor, ACharacter.
+
+U (Objects): UObject 클래스를 상속받는 클래스의 이름은 'U'
+	예: UComponent, UMaterial, UTexture.
+	
+F (Structs): 구조체(Structs)의 이름은 'F'
+	예: FVector, FRotator, FHitResult.
+
+E (Enumerators): 열거형(Enumerators)의 이름은 'E'다. 
+	예: EGameState, EWeaponType.
+
+S (Widgets): 언리얼 엔진의 UMG(User Interface) 시스템에서 사용하는 위젯 클래스의 이름은 'S'
+	예: SButton, STextBlock.
+
+I (Interfaces): 인터페이스의 이름은 'I'. 
+	예: IInteractable, IMovable.
+
+B (Blueprints): 블루프린트 클래스의 이름은 종종 'B'나 'BP'
+	예: BP_MyActor, B_PlayerCharacter. 이는 공식적인 규칙은 아니지만 커뮤니티에서 널리 사용됩니다.
+
+T (Templates): 템플릿 매개변수의 이름은 'T'
+	예: TArray, TMap.
+
+P (Protocols/Delegates): 프로토콜이나 델리게이트는 'P' 또는 'F'와 함께 사용
+	예: FOnHealthChanged.
+
+
+
+
+
+프로젝트 폴더 경로 기준 바꾸기
+ cpp1211.Build.cs 파일에
+PrivateDependencyModuleNames.AddRange(new string[] {  });
+는 주석 처리하고 밑에 추가
+PublicIncludePaths.Add(ModuleDirectory); //프로젝트폴더 밑에 Source 기준으로 작업하겠다는거
+
+
+
+코드는 항상 GENERATED_BODY() 뒤에 넣어야 인식함
+ h파일 클래스 선언시에 속성부분 맨 위에 바로 적어줌
+
+
+
+상속받은 블루프린트객체가 특정 클래스만 쓸 수 있도록 제한하기
+	UPROPERTY(EditDefaultsOnly)
+		UClass* spawnClass; 대신
+	UPROPERTY(EditDefaultsOnly)
+		TSubClassOf<class ACSpawnActor> spawnClass; 을 넣으면 됨
+
+
+ 
+
+에셋파일 추가하기
+프로젝트 폴더- content 폴더에 넣는다.
+
+
+
+
+캐릭터만들기
+
+
+
+
+게임모드 세팅
+편집 - 프로젝트 세팅 - 프로젝트 - 맵 & 모드 - 기본 게임모드를
+내 프로젝트명 GameModeBase로 설정하면 cpp에서 내가 수정한 게임모드.cpp 파일을 적용할
+수 있다. 시작 씬도 여기서 에디터 시작 맵으로 설정할 수 있음
+
+
+키 세팅
+편집 - 프로젝트 세팅 - 엔진 - 입력 - 액션 매핑, 축 매핑
+
+
+
+
+로그
+화면로그
+GEngine->AddOnScreenDebugMessage(InKey, Duration, InColor, InValue.ToString());
+콘솔로그
+UE_LOG(LogTemp, Display, L"%d", InValue); // Display자리에 Error등을 적어 색상을 바꿀 수 있음
+콘솔로그는 카테고리를 가지고 있어서 UE에디터 출력로그 필터에서 카테고리를 지정해 볼 수 있음
+또한 출력할때도 카테고리를 지정해서 출력 가능, 독립형으로 실행하면 콘솔로그를 볼 수 없음
+
+
+
+빌보드
+카메라 방향을 항상 바라보는 기법을 의미한다.
+언리얼의 debugPoint나 3D게임에서 산 같은 배경이 단일 빌보드 기법으로 구현되어
+랜더링 부하를 줄이고 풀같은건 빌보드를 직각으로 두개를 겹쳐 사용해 볼륨감을 준다
+
+
+
+머티리얼 색상
+FVector4에서 색상을 정할때
+이미시브 컬러의 RGB중 하나를 0~1이 아닌 3같이 더 큰 값을 넣으면 강조되는 색상이 나옴
+
+
+
+
+
+
+

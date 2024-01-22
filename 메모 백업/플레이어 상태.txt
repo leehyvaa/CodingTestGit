@@ -1,0 +1,19 @@
+PlayerState
+-이동속도
+-점프가능여부
+-moveInput(?)
+
+	-ActiveControl
+	idle,무브,어택,Roll,점프 추상함수
+		-맨손
+		-칼
+		-활
+
+
+anyState 
+	-죽음
+	-상호작용(맨손에서 이동하는게 적합해보임)
+
+컴포넌트
+-아이템줍기
+-상호작용 코드
