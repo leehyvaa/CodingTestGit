@@ -5,6 +5,8 @@ Inha@860hrd121
 소스트리 토큰
 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
 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
+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
+
 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
 
 게임잡에 마감일 적혀있는 공고가 회사가 급한 공고 - 진짜로 신입을 뽑는 회사
